@@ -1,0 +1,265 @@
+================================================================================
+  AMALITECH GCA PREP — QUESTIONS & ANSWERS ASSET
+  Format: Each question block starts with [Q<N>] and ends with [/Q<N>]
+  Solutions are in Java. Use this file to populate or update the HTML app.
+================================================================================
+
+[Q1]
+TITLE: Maximize the Expression
+DIFFICULTY: medium
+FUNCTION: solve(int a, int b, int c)
+
+DESCRIPTION:
+Bill studies in a school and he adores Maths. His class has been studying
+arithmetic expressions. On the last class the teacher wrote three positive
+integers a, b, c on the blackboard. The task was to insert signs of operations
++ and *, and probably brackets between the numbers so that the value of the
+resulting expression is as large as possible.
+
+NOTE: You can insert operation signs only between a and b, and between b and c.
+The order of a, b, c must be preserved.
+
+EXAMPLES:
+  Input:  a=2, b=3, c=4   →  Output: 24   (2*3*4 = 24 is the maximum)
+  Input:  a=1, b=1, c=1   →  Output: 2    (1+1*1=2 or 1*(1+1)=2)
+
+CONSTRAINTS:
+  - 1 ≤ a, b, c ≤ 1,000,000
+  - All inputs are positive integers
+  - Return the maximum possible value
+
+HINTS:
+  1. Try all 4 expression variants: a+b*c, a*(b+c), a*b*c, (a+b)*c.
+  2. Use Math.max() to compare all four results.
+  3. Watch out for large inputs — use long (64-bit) to avoid overflow.
+  4. The answer is always one of the 4 variants; no other combos are possible.
+
+SOLUTION (Java):
+package com.example;
+public class Solution {
+    public int solve(int a, int b, int c) {
+        int v1 = a + b * c;
+        int v2 = a * (b + c);
+        int v3 = a * b * c;
+        int v4 = (a + b) * c;
+        int v5 = a * b + c;
+        int v6 = a + b + c;
+        return Math.max(Math.max(v1, v2), Math.max(Math.max(v3, v4), Math.max(v5, v6)));
+    }
+}
+
+TEST CASES:
+  solve(2, 3, 4)                    → 24
+  solve(1, 1, 1)                    → 2
+  solve(1000000, 1000000, 1000000)  → 1000000000000
+[/Q1]
+
+--------------------------------------------------------------------------------
+
+[Q2]
+TITLE: Count Palindromes
+DIFFICULTY: easy
+FUNCTION: countPalindromes(String s)
+
+DESCRIPTION:
+Given a string s, count how many substrings of s are palindromes.
+A palindrome is a string that reads the same forward and backward.
+Note that every single character is a palindrome.
+
+NOTE: Count ALL palindromic substrings, including overlapping ones and
+single characters.
+
+EXAMPLES:
+  Input: s="abc"  →  Output: 3   ("a","b","c" are palindromes)
+  Input: s="aaa"  →  Output: 6   ("a","a","a","aa","aa","aaa")
+
+CONSTRAINTS:
+  - 1 ≤ |s| ≤ 1000
+  - s consists of lowercase English letters
+  - Return total count
+
+HINTS:
+  1. Every single character is a palindrome — start your count at n.
+  2. Expand around each center: for odd-length check s[i-k]==s[i+k];
+     for even-length check s[i-k-1]==s[i+k].
+  3. Two nested loops: O(n²) is fine for n≤1000.
+  4. Don't forget even-length palindromes like "aa".
+
+SOLUTION (Java):
+package com.example;
+public class Solution {
+    public int countPalindromes(String s) {
+        int n = s.length();
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            // Odd-length palindromes centered at i
+            int l = i, r = i;
+            while (l >= 0 && r < n && s.charAt(l) == s.charAt(r)) {
+                count++;
+                l--;
+                r++;
+            }
+            // Even-length palindromes centered between i and i+1
+            l = i; r = i + 1;
+            while (l >= 0 && r < n && s.charAt(l) == s.charAt(r)) {
+                count++;
+                l--;
+                r++;
+            }
+        }
+        return count;
+    }
+}
+
+TEST CASES:
+  countPalindromes("abc")  → 3
+  countPalindromes("aaa")  → 6
+  countPalindromes("z")    → 1
+[/Q2]
+
+--------------------------------------------------------------------------------
+
+[Q3]
+TITLE: Binary Gap
+DIFFICULTY: easy
+FUNCTION: binaryGap(int N)
+
+DESCRIPTION:
+Given a positive integer N, find the longest sequence of zeros in its binary
+representation that is surrounded by ones at both ends.
+Return the length of the longest such sequence.
+If no such sequence exists, return 0.
+
+NOTE: The binary gap is only counted between two 1-bits.
+Leading/trailing zeros do not count.
+
+EXAMPLES:
+  Input: N=9    →  Output: 2  (9 in binary is 1001, gap of 2 zeros)
+  Input: N=529  →  Output: 4  (529 in binary is 1000010001, longest gap is 4)
+
+CONSTRAINTS:
+  - 1 ≤ N ≤ 2,147,483,647
+  - Return 0 if no binary gap exists
+
+HINTS:
+  1. Convert N to binary string using Integer.toBinaryString(N).
+  2. Find the positions of all '1' bits, then check gaps between consecutive ones.
+  3. Track lastOne index and current index as you scan the binary string.
+  4. If fewer than two '1' bits exist, return 0.
+
+SOLUTION (Java):
+package com.example;
+public class Solution {
+    public int binaryGap(int N) {
+        String bin = Integer.toBinaryString(N);
+        int maxGap = 0;
+        int lastOne = -1;
+        for (int i = 0; i < bin.length(); i++) {
+            if (bin.charAt(i) == '1') {
+                if (lastOne != -1) {
+                    maxGap = Math.max(maxGap, i - lastOne - 1);
+                }
+                lastOne = i;
+            }
+        }
+        return maxGap;
+    }
+}
+
+TEST CASES:
+  binaryGap(9)    → 2
+  binaryGap(529)  → 4
+  binaryGap(15)   → 0
+[/Q3]
+
+--------------------------------------------------------------------------------
+
+[Q4]
+TITLE: Missing Element
+DIFFICULTY: hard
+FUNCTION: findMissing(int[] A)
+
+DESCRIPTION:
+You are given an array A of N distinct integers from 1 to N+1 (one element is
+missing). Find and return the missing element.
+The solution must run in O(n) time and O(1) space.
+
+NOTE: Do not use sorting. Think about the mathematical sum formula.
+
+EXAMPLES:
+  Input: A=[2,3,1,5]  →  Output: 4   (4 is the missing number from 1..5)
+  Input: A=[1]        →  Output: 2   (Only 1 is present, 2 is missing)
+
+CONSTRAINTS:
+  - 1 ≤ N ≤ 100,000
+  - Elements are distinct integers from 1 to N+1
+  - O(n) time, O(1) space required
+
+HINTS:
+  1. Expected sum of 1..N+1 is (N+1)*(N+2)/2.
+  2. Subtract the actual array sum from the expected sum.
+  3. Single pass, no extra memory needed.
+  4. Watch for integer overflow — use long for the sum.
+
+SOLUTION (Java):
+package com.example;
+public class Solution {
+    public int findMissing(int[] A) {
+        int n = A.length;
+        long expected = (long)(n + 1) * (n + 2) / 2;
+        long actual = 0;
+        for (int x : A) {
+            actual += x;
+        }
+        return (int)(expected - actual);
+    }
+}
+
+TEST CASES:
+  findMissing([2,3,1,5])           → 4
+  findMissing([1])                 → 2
+  findMissing([1..100000, no 55555]) → 55555
+[/Q4]
+
+================================================================================
+  HOW TO ADD NEW QUESTIONS
+================================================================================
+
+Copy the block template below, fill in all fields, and add it to this file.
+Then update the `problems` array in the HTML's <script> section accordingly.
+
+[Q<N>]
+TITLE: ...
+DIFFICULTY: easy | medium | hard
+FUNCTION: methodName(params)
+
+DESCRIPTION:
+...
+
+NOTE: ...
+
+EXAMPLES:
+  Input: ...  →  Output: ...  (explanation)
+
+CONSTRAINTS:
+  - ...
+
+HINTS:
+  1. ...
+  2. ...
+  3. ...
+  4. ...
+
+SOLUTION (Java):
+package com.example;
+public class Solution {
+    public <returnType> methodName(params) {
+        // full working solution line by line
+    }
+}
+
+TEST CASES:
+  methodName(input)  → expected
+[/Q<N>]
+
+================================================================================
